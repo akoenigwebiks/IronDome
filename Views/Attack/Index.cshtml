@@ -56,22 +56,14 @@
                     @Html.DisplayFor(modelItem => item.TimeToImpact)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-
-                    @if (@item.ActiveID == null)
-                    {
-                        <form asp-action="StartAttack" asp-route-attackId="@item.ID">
-                            <input type="submit" value="Attack" class="btn btn-primary" />
-                        </form>
+                    @{
+                        string ActionName = item.ActiveID == null ? "StartAttack" : "EndAttack";
+                        string BtnText = item.ActiveID == null ? "Launch" : "Terminate";
+                        string ClassName = item.ActiveID == null ? "btn btn-danger" : "btn btn-warning";
                     }
-                    else
-                    {
-                        <form asp-action="EndAttack" asp-route-attackId="@item.ID">
-                            <input type="submit" value="End Attack" class="btn btn-primary" />
-                        </form>
-                    }
+                    <form asp-action="@ActionName" asp-route-attackId="@item.ID">
+                        <input type="submit" value="@BtnText" class="@ClassName" />
+                    </form>
                 </td>
             </tr>
         }
