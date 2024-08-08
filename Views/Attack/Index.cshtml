@@ -1,0 +1,79 @@
+﻿@model IEnumerable<IronDome.Models.Attack>
+
+@{
+    ViewData["Title"] = "Manage Attacks";
+}
+
+<h1>ManageThreats</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThreatType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThreatSource)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsInterceptedOrExploded)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeToImpact)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ThreatType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ThreatSource)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsInterceptedOrExploded)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimeToImpact)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+
+                    @if (@item.ActiveID == null)
+                    {
+                        <form asp-action="StartAttack" asp-route-attackId="@item.ID">
+                            <input type="submit" value="Attack" class="btn btn-primary" />
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="EndAttack" asp-route-attackId="@item.ID">
+                            <input type="submit" value="End Attack" class="btn btn-primary" />
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
