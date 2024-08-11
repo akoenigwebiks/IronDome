@@ -36,6 +36,11 @@ namespace IronDome.Services
             var cts = new CancellationTokenSource();
             _attacks[attackActiveId] = cts;
 
+            /*
+             var cts = jhgjhghjgvkj
+             defenses[defensseid]=cts
+             */
+
             /*green non awaited warning without _ = */
             _ = Task.Run(() => RunTask(attackActiveId, cts.Token), cts.Token);
 
@@ -66,6 +71,7 @@ namespace IronDome.Services
             }
 
             _attacks.TryRemove(attack.ActiveID, out CancellationTokenSource? cts);
+            //var cts = _attacks[attack.ActiveID];
             cts?.Cancel();
 
             attack.ActiveID = null;
