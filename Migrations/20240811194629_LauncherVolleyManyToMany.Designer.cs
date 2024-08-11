@@ -4,6 +4,7 @@ using IronDome.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IronDome.Migrations
 {
     [DbContext(typeof(IronDomeContextV3))]
-    partial class IronDomeContextV3ModelSnapshot : ModelSnapshot
+    [Migration("20240811194629_LauncherVolleyManyToMany")]
+    partial class LauncherVolleyManyToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,14 +42,9 @@ namespace IronDome.Migrations
                     b.Property<int>("LauncherId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VolleyId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("LauncherId");
-
-                    b.HasIndex("VolleyId");
 
                     b.ToTable("Ammo");
                 });
@@ -143,15 +141,7 @@ namespace IronDome.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IronDome.Models.Volley", "Volley")
-                        .WithMany()
-                        .HasForeignKey("VolleyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Launcher");
-
-                    b.Navigation("Volley");
                 });
 
             modelBuilder.Entity("IronDome.Models.Launcher", b =>

@@ -10,8 +10,11 @@ namespace IronDome.Data
         {
         }
 
+
+
         public DbSet<IronDome.Models.Attacker> Attacker { get; set; } = default!;
         public DbSet<IronDome.Models.Volley> Volley { get; set; } = default!;
         public DbSet<IronDome.Models.Launcher> Launcher { get; set; } = default!;
+        public DbSet<IronDome.Models.Ammo> Ammo { get; set; } = default!;
     }
 }

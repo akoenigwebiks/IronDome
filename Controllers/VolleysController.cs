@@ -19,13 +19,30 @@ public class VolleysController : Controller
     public async Task<IActionResult> Index(int attackerId)
     {
         var volleys = await _context.Volley
-            .Include(v => v.Launchers) // Include related Launchers
+            .Include(v => v.Launchers)
+            .ThenInclude(l => l.Ammo)
             .Where(v => v.Launchers.Any(l => l.AttackerId == attackerId))
             .ToListAsync();
 
+        var volleyViewModel = volleys.Select(v => new VolleyViewModel
+        {
+            Volley = v,
+            LauncherAmmoSummary = v.Launchers
+                .GroupBy(l => l.Id)
+                .Select(group => new LauncherAmmoSummary
+                {
+                    LauncherName = group.First().Name,
+                    AmmoCount = group.Sum(l => l.Ammo.Count(a => a.VolleyId == v.Id))
+                })
+                .ToList()
+        }).ToList();
+
         ViewBag.AttackerId = attackerId;
-        return View(volleys);
+        return View(volleyViewModel);
     }
+
+
+
 
     // GET: Volleys/Details/5
     public async Task<IActionResult> Details(int? id, int attackerId)
@@ -61,14 +78,13 @@ public class VolleysController : Controller
         ViewBag.AttackerId = attackerId;
         return View(vmCreateVolley);
     }
-
     // POST: Volleys/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(int attackerId, VMCreateVolley vmCreateVolley)
     {
         ModelState.Remove("Attacker");
-        if (ModelState.IsValid == false)
+        if (!ModelState.IsValid)
         {
             ViewBag.AttackerId = attackerId;
             return View(vmCreateVolley);
@@ -76,21 +92,33 @@ public class VolleysController : Controller
 
         var volley = new Volley
         {
+            LaunchDate = vmCreateVolley.LaunchDate,
             Launchers = new List<Launcher>()
         };
 
+        // Create Ammo records for each launcher and amount
         foreach (var la in vmCreateVolley.LauncherAmounts)
         {
             var launcher = await _context.Launcher.FindAsync(la.LauncherId);
-            if (launcher == null) continue;
-
-            for (int i = 0; i < la.Amount; i++)
+            if (launcher != null)
             {
+                for (int i = 0; i < la.Amount; i++)
+                {
+                    var ammo = new Ammo
+                    {
+                        LauncherId = launcher.Id,
+                        Volley = volley, // Link ammo to the current volley
+                        IsLaunched = false,  // Set initial state
+                        IsDestroyed = false  // Set initial state
+                    };
+                    _context.Ammo.Add(ammo);
+                }
+
+                // Add the launcher to the volley
                 volley.Launchers.Add(launcher);
             }
-
         }
-        volley.att
+
         _context.Volley.Add(volley);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index), new { attackerId });
@@ -143,18 +171,9 @@ public class VolleysController : Controller
     {
         if (id != vmCreateVolley.Id) return BadRequest("Mismatched Volley ID.");
 
-        if (ModelState.IsValid == false)
+        if (!ModelState.IsValid)
         {
             ViewBag.AttackerId = attackerId;
-            ViewBag.Launchers = _context.Launcher
-                .Where(l => l.AttackerId == attackerId)
-                .Select(l => new LauncherAmount
-                {
-                    LauncherId = l.Id,
-                    LauncherName = l.Name,
-                    Amount = 0 // Set to 0, actual amounts are handled in the form
-                })
-                .ToList();
             return View(vmCreateVolley);
         }
 
@@ -168,9 +187,12 @@ public class VolleysController : Controller
 
             volley.LaunchDate = vmCreateVolley.LaunchDate;
 
-            // Clear existing launchers and add the new ones
+            // Clear existing launchers and associated ammo
+            var existingAmmo = _context.Ammo.Where(a => a.VolleyId == id);
+            _context.Ammo.RemoveRange(existingAmmo);
             volley.Launchers.Clear();
 
+            // Create new Ammo records for each launcher and amount
             foreach (var la in vmCreateVolley.LauncherAmounts)
             {
                 var launcher = await _context.Launcher.FindAsync(la.LauncherId);
@@ -178,8 +200,18 @@ public class VolleysController : Controller
                 {
                     for (int i = 0; i < la.Amount; i++)
                     {
-                        volley.Launchers.Add(launcher);
+                        var ammo = new Ammo
+                        {
+                            LauncherId = launcher.Id,
+                            VolleyId = volley.Id,
+                            IsLaunched = false,  // Set initial state
+                            IsDestroyed = false  // Set initial state
+                        };
+                        _context.Ammo.Add(ammo);
                     }
+
+                    // Add the launcher to the volley
+                    volley.Launchers.Add(launcher);
                 }
             }
 
@@ -193,7 +225,6 @@ public class VolleysController : Controller
         }
         return RedirectToAction(nameof(Index), new { attackerId });
     }
-
 
     // GET: Volleys/Delete/5
     public async Task<IActionResult> Delete(int? id, int attackerId)

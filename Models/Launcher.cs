@@ -10,5 +10,6 @@ public class Launcher
     public IEnumerable<Ammo>? Ammo { get; set; }
     public int AttackerId { get; set; }
     public Attacker Attacker { get; set; }
+    public IEnumerable<Volley>? Volleys { get; set; }
 }
 

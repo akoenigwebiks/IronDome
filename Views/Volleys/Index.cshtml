@@ -1,4 +1,4 @@
-﻿@model IEnumerable<IronDome.Models.Volley>
+﻿@model IEnumerable<IronDome.Models.VolleyViewModel>
 
 @{
     ViewData["Title"] = "Volleys";
@@ -10,9 +10,9 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.LaunchDate)
+                @Html.DisplayNameFor(model => model.First().Volley.LaunchDate)
             </th>
-            <th>Launchers</th>
+            <th>Launchers and Ammo Summary</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -21,20 +21,30 @@
         {
             <tr>
                 <td class="text-primary">
-                    @Html.DisplayFor(modelItem => item.LaunchDate)
+                    @Html.DisplayFor(modelItem => item.Volley.LaunchDate)
                 </td>
                 <td class="text-primary">
-                    @string.Join(", ", item.Launchers.Select(l => l.Name))
+                    @foreach (var summary in item.LauncherAmmoSummary)
+                    {
+                        <span class="badge bg-primary">
+                            @($"{summary.LauncherName}")
+                        </span>
+                        <span class="badge bg-success">
+                            @($"{summary.AmmoCount} Ammo")
+                        </span>
+                        <br/>
+                    }
                 </td>
+
                 <td>
                     <div class="btn-group" role="group" aria-label="Actions">
-                        <a asp-action="Edit" asp-route-id="@item.Id" asp-route-attackerId="@ViewBag.AttackerId" class="btn btn-sm btn-primary">
+                        <a asp-action="Edit" asp-route-id="@item.Volley.Id" asp-route-attackerId="@ViewBag.AttackerId" class="btn btn-sm btn-primary">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        <a asp-action="Details" asp-route-id="@item.Id" asp-route-attackerId="@ViewBag.AttackerId" class="btn btn-sm btn-info">
+                        <a asp-action="Details" asp-route-id="@item.Volley.Id" asp-route-attackerId="@ViewBag.AttackerId" class="btn btn-sm btn-info">
                             <i class="bi bi-info-circle"></i> Details
                         </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" asp-route-attackerId="@ViewBag.AttackerId" class="btn btn-sm btn-danger">
+                        <a asp-action="Delete" asp-route-id="@item.Volley.Id" asp-route-attackerId="@ViewBag.AttackerId" class="btn btn-sm btn-danger">
                             <i class="bi bi-trash"></i> Delete
                         </a>
                     </div>
