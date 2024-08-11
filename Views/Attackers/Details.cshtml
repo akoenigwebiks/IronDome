@@ -1,0 +1,51 @@
+﻿@model IronDome.Models.Attacker
+
+@{
+    ViewData["Title"] = "Attacker Details";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Attacker Details</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => model.Distance)
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.Distance)
+                    </dd>
+                </dl>
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <a asp-controller="Volleys"
+                       asp-action="Index"
+                       asp-route-id="@Model?.Id"
+                       class="btn btn-success">
+                        <i class="bi bi-plus"></i> Volley Dashboard
+                    </a>
+                    <a asp-controller="Launchers"
+                       asp-action="Index"
+                       asp-route-attackerId="@Model?.Id"
+                       class="btn btn-warning">
+                        <i class="bi bi-rocket-takeoff-fill" style="color: red;"></i>
+                        Launchers Management
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

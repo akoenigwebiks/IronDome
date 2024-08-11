@@ -1,0 +1,17 @@
+﻿@model IronDome.Models.Attacker
+
+@{
+    ViewData["Title"] = "Edit Attacker Name";
+}
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        @await Html.PartialAsync("~/Views/Shared/Forms/_AttackerForm.cshtml", Model)
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

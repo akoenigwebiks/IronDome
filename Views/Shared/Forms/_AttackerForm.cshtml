@@ -1,0 +1,58 @@
+﻿@model IronDome.Models.Attacker
+@{
+    bool IsEditMode = Model?.Name != null && Model?.Id > -1;
+    string Title = IsEditMode ? "Edit Attacker" : "Create Attacker";
+    string FormAction = IsEditMode ? "Edit" : "Create";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">
+            @Title
+        </h4>
+        <hr />
+        <form asp-action="@FormAction">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <!-- Name -->
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" style="background-color: yellow;">
+                        <i class="bi bi-rocket-takeoff-fill" style="color: red;"></i>
+                    </span>
+                </div>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    placeholder="Name"
+                    name="Name" 
+                    value="@Model?.Name">
+            </div>
+            <span asp-validation-for="Name" class="text-danger"></span>
+            <!-- Distance -->
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" style="background-color: yellow;">
+                        <i class="bi bi-map"></i>
+                    </span>
+                </div>
+                <input 
+                    min="1"
+                    type="number" 
+                    class="form-control" 
+                    placeholder="Distance" 
+                    name="Distance" 
+                    value="@Model?.Distance">
+            </div>
+            <span asp-validation-for="Distance" class="text-danger"></span>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="bi bi-plus"></i> @((IsEditMode) ? "Update Attacker" : "Add Attacker")
+                </button>
+            </div>
+        </form>
+        <a asp-action="Index" class="btn btn-outline-success">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
