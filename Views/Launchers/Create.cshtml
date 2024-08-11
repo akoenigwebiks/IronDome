@@ -1,47 +1,17 @@
 ﻿@model IronDome.Models.Launcher
 
 @{
-    ViewData["Title"] = "Create";
-    int attackerId = (int)ViewData["AttackerId"]!;
+    ViewData["Title"] = "New Launcher";
 }
 
-<h1>Create</h1>
-
-<h4>Launcher</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Range" class="control-label"></label>
-                <input asp-for="Range" class="form-control" />
-                <span asp-validation-for="Range" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Velocity" class="control-label"></label>
-                <input asp-for="Velocity" class="form-control" />
-                <span asp-validation-for="Velocity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="col-md-4 offset-md-4">
+        @await Html.PartialAsync("~/Views/Shared/Forms/_LauncherForm.cshtml", Model)
     </div>
 </div>
 
-<div>
-    <hr />
-    <a asp-controller="Launchers"
-       asp-action="Index"
-       asp-route-attackerId="@attackerId"
-       class="btn btn-primary">
-        Back to launchers list
-    </a>
-</div>
-
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
